@@ -224,10 +224,14 @@ function downloadGraph(topicIndex) {
 
 function downloadCSV() {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Topic,Not Attended,Don't Understand the Question,Don't Understand Basic,Can't Apply,Numerical Error,Complete Error in Shading,Complete\n";
+    csvContent += "Topic,Not Attended,Don't Understand the Question,Don't Understand Basic,Can't Apply,Numerical Error,Complete Error in Shading,Complete,Main Issue\n";
 
-    topicsData.forEach(topic => {
-        csvContent += `${topic.topicName},${topic.choiceCounts["Not Attended"]},${topic.choiceCounts["Don't Understand the Question"]},${topic.choiceCounts["Don't Understand Basic"]},${topic.choiceCounts["Can't Apply"]},${topic.choiceCounts["Numerical Error"]},${topic.choiceCounts["Complete Error in Shading"]},${topic.choiceCounts["Complete"]}\n`;
+     topicsData.forEach(topic => {
+        const counts = topic.choiceCounts;
+        const maxCount = Math.max(...categories.map(cat => counts[cat]));
+        const mainIssue = categories.find(cat => counts[cat] === maxCount);
+
+        csvContent += `${topic.topicName},${counts["Not Attended"]},${counts["Don't Understand the Question"]},${counts["Don't Understand Basic"]},${counts["Can't Apply"]},${counts["Numerical Error"]},${counts["Complete Error in Shading"]},${counts["Complete"]},${mainIssue}\n`;
     });
 
     const encodedUri = encodeURI(csvContent);
