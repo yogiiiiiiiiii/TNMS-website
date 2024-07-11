@@ -226,12 +226,20 @@ function downloadCSV() {
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "Topic,Not Attended,Don't Understand the Question,Don't Understand Basic,Can't Apply,Numerical Error,Complete Error in Shading,Complete,Main Issue\n";
 
-     topicsData.forEach(topic => {
+    const categories = ["Not Attended", "Don't Understand the Question", "Don't Understand Basic", "Can't Apply", "Numerical Error", "Complete Error in Shading", "Complete"];
+
+    topicsData.forEach(topic => {
         const counts = topic.choiceCounts;
         const maxCount = Math.max(...categories.map(cat => counts[cat]));
         const mainIssue = categories.find(cat => counts[cat] === maxCount);
 
-        csvContent += `${topic.topicName},${counts["Not Attended"]},${counts["Don't Understand the Question"]},${counts["Don't Understand Basic"]},${counts["Can't Apply"]},${counts["Numerical Error"]},${counts["Complete Error in Shading"]},${counts["Complete"]},${mainIssue}\n`;
+        let row = `${topic.topicName},`;
+        categories.forEach(cat => {
+            row += `${counts[cat]},`;
+        });
+        row += `${mainIssue}\n`;
+
+        csvContent += row;
     });
 
     const encodedUri = encodeURI(csvContent);
